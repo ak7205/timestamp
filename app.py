@@ -102,10 +102,58 @@ def proses_watermark(img_file, teks):
 
     return img.convert("RGB")
 
+
+def format_alamat_indonesia(addr: dict) -> str:
+    # DESA / KELURAHAN
+    desa = (
+        addr.get("village")
+        or addr.get("hamlet")
+        or addr.get("suburb")
+        or addr.get("neighbourhood")
+    )
+
+    # KECAMATAN
+    kecamatan = (
+        addr.get("subdistrict")
+        or addr.get("district")
+        or addr.get("city_district")
+    )
+
+    # KABUPATEN / KOTA
+    kabupaten = addr.get("county") or addr.get("city")
+
+    # PROVINSI
+    provinsi = addr.get("state")
+
+    parts = []
+
+    if desa:
+        parts.append(f"Desa {desa}")
+
+    # Kecamatan (WAJIB)
+    if kecamatan:
+        parts.append(f"Kecamatan {kecamatan}")
+    else:
+        parts.append("Kecamatan [isi kecamatan]")
+
+    # Kabupaten (WAJIB)
+    if kabupaten:
+        if not kabupaten.lower().startswith(("kabupaten", "kota")):
+            kabupaten = f"Kabupaten {kabupaten}"
+        parts.append(kabupaten)
+    else:
+        parts.append("Kabupaten [isi kabupaten]")
+
+    if provinsi:
+        parts.append(provinsi)
+
+    return ", ".join(parts)
+
+
 # =============================
 # STREAMLIT UI
 # =============================
-st.set_page_config("Photo Timestamp GPS", "📸", layout="wide")
+st.set_page_config("AK Timestamp v1", "📸", layout="wide")
 
 def load_css():
     with open("style.css") as f:
@@ -119,8 +167,8 @@ def card_start():
 def card_end():
     st.markdown('</div>', unsafe_allow_html=True)
 
-st.title("📸 Photo Timestamp GPS")
-st.caption("Tambahkan tanggal, alamat, dan koordinat ke foto")
+st.title("AK Timestamp v1")
+st.caption("Jangan sampe Bu Ani tau!!")
 
 # =============================
 # INPUT CARD
@@ -131,49 +179,114 @@ colA, colB = st.columns(2)
 with colA:
     input_date = st.date_input("Tanggal", datetime.now())
 with colB:
-    input_time = st.time_input("Waktu", datetime.now())
+    col_h, col_m = st.columns(2)
+    with col_h:
+        jam = st.selectbox(
+            "Jam",
+            [f"{i:02d}" for i in range(24)],
+            index=datetime.now().hour
+        )
+
+    with col_m:
+        menit = st.selectbox(
+            "Menit",
+            [f"{i:02d}" for i in range(60)],
+            index=datetime.now().minute
+        )
+
+    input_time_str = f"{jam}:{menit}"
+
 card_end()
 
 # =============================
-# LOCATION SEARCH
+# LOCATION SEARCH (IMPROVED UX)
 # =============================
-st.markdown("### 📍 Lokasi")
 
-query = st.text_input("Cari lokasi", placeholder="Contoh: Donggala, Sulawesi Tengah")
-if st.button("Cari"):
+card_start()
+query = st.text_input(
+    "Cari lokasi (Alamat/Koordinat)",
+    placeholder="Contoh: Gunung Bale, Donggala"
+)
+
+if st.button("🔍 Cari lokasi"):
     geo = Nominatim(user_agent="photo_timestamp")
-    loc = geo.geocode(query)
+
+    loc = geo.geocode(
+        query + ", Indonesia",
+        exactly_one=True,
+        addressdetails=True
+    )
+
+    if not loc:
+        locs = geo.geocode(query, exactly_one=False, limit=1)
+        if locs:
+            loc = locs[0]
+
     if loc:
         st.session_state.lat = loc.latitude
         st.session_state.lng = loc.longitude
-        st.success(loc.address)
+        st.success(f"📌 {loc.address}")
     else:
-        st.warning("Lokasi tidak ditemukan")
+        st.warning(
+            "Lokasi tidak ditemukan. "
+            "Coba tulis lebih lengkap, contoh: `Sirenja, Donggala`"
+        )
+card_end()
 
+
+# ===== MAP FULL WIDTH =====
 m = folium.Map(
     location=[st.session_state.lat, st.session_state.lng],
-    zoom_start=14
+    zoom_start=14,
+    control_scale=True
 )
-m.add_child(folium.LatLngPopup())
 
-map_data = st_folium(m, height=300)
+folium.Marker(
+    [st.session_state.lat, st.session_state.lng],
+    tooltip="Lokasi terpilih",
+    icon=folium.Icon(color="red")
+).add_to(m)
+
+map_data = st_folium(
+    m,
+    height=480,          # ⬅️ lebih tinggi & enak
+    use_container_width=True
+)
 
 if map_data and map_data.get("last_clicked"):
     st.session_state.lat = map_data["last_clicked"]["lat"]
     st.session_state.lng = map_data["last_clicked"]["lng"]
 
-st.info(
-    f"Koordinat: {st.session_state.lat:.5f}, {st.session_state.lng:.5f}"
+
+# ===== INFO KOORDINAT =====
+st.divider()
+
+st.caption(
+    f"📍 Koordinat terpilih: "
+    f"{st.session_state.lat:.5f}, {st.session_state.lng:.5f}"
 )
 
+
+# ===== REVERSE GEOCODE =====
 geo = Nominatim(user_agent="photo_timestamp")
 try:
-    loc = geo.reverse(f"{st.session_state.lat}, {st.session_state.lng}")
-    address = loc.address if loc else ""
+    loc = geo.reverse(
+        f"{st.session_state.lat}, {st.session_state.lng}",
+        exactly_one=True,
+        addressdetails=True
+    )
+    addr = loc.raw.get("address", {}) if loc else {}
 except:
-    address = ""
+    addr = {}
 
-input_address = st.text_area("Alamat", value=address)
+alamat_otomatis = format_alamat_indonesia(addr)
+
+input_address = st.text_area(
+    "Alamat",
+    value=alamat_otomatis,
+    height=90
+)
+
 
 # =============================
 # PREVIEW
@@ -182,7 +295,7 @@ st.markdown("### 👀 Preview")
 
 if uploaded_file:
     data = {
-        "datetime": input_date.strftime("%a, %d %b %Y") + " " + input_time.strftime("%H:%M"),
+        "datetime": input_date.strftime("%a, %d %b %Y") + " " + input_time_str,
         "alamat": input_address,
         "koordinat": (
             f"{abs(st.session_state.lat):.6f}°"

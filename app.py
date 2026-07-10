@@ -159,6 +159,26 @@ def load_css():
 
 load_css()
 
+components.html(
+    """
+    <script>
+    function hideStreamlitBadge() {
+        try {
+            window.parent.document
+                .querySelectorAll('[href*="streamlit.io"]')
+                .forEach(el => {
+                    const badge = el.closest('div') || el;
+                    badge.style.display = 'none';
+                });
+        } catch (e) {}
+    }
+    hideStreamlitBadge();
+    setInterval(hideStreamlitBadge, 1000);
+    </script>
+    """,
+    height=0,
+)
+
 @contextmanager
 def card(title, icon=""):
     """A real bordered container (native Streamlit nesting) with a title

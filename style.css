@@ -1,29 +1,295 @@
-/* Container utama */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ===== BASE APP BACKGROUND ===== */
+.stApp {
+    background:
+        radial-gradient(circle at 15% 0%, rgba(255,199,44,0.06) 0%, transparent 45%),
+        radial-gradient(circle at 85% 100%, rgba(255,199,44,0.05) 0%, transparent 45%),
+        #0b0b0d;
+    color: #f2f2f0;
+}
+
+#MainMenu, footer, header {visibility: hidden;}
+
 .block-container {
+    padding-top: 0.8rem;
+    padding-bottom: 2.5rem;
     max-width: 1200px;
-    padding-top: 2rem;
 }
 
-/* Heading */
-h1, h2, h3 {
+/* remove Streamlit's default top spacer that creates empty gaps above content */
+.block-container > div:first-child {
+    margin-top: 0 !important;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0.4rem 0 1.3rem 0;
+    margin-bottom: 1.6rem;
+    border-bottom: 1px solid #1c1c1f;
+}
+
+.brand-name {
+    font-size: 2.1rem;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.brand-name .accent {
+    color: #FFC72C;
+}
+
+.brand-sub {
+    font-size: 0.8rem;
+    color: #8a8a8f;
     font-weight: 600;
+    margin-top: 2px;
+    letter-spacing: 0.02em;
 }
 
-/* Input spacing */
-div[data-baseweb="input"],
-div[data-baseweb="textarea"] {
-    margin-bottom: 14px;
+.brand-sub b {
+    color: #d8d8db;
 }
 
-/* Hilangkan garis default */
-hr {
-    display: none;
+.topbar-badge {
+    background: #141416;
+    border: 1px solid #2a2a2e;
+    color: #e5e5e5;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
-.card {
-    background-color: #0e1117;
-    padding: 20px;
+/* ===== CARDS (native st.container(border=True)) ===== */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: #141416 !important;
+    border-radius: 16px !important;
+    border: 1px solid #232326 !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35) !important;
+    padding: 1.3rem 1.4rem 1.5rem 1.4rem !important;
+    margin-bottom: 1.1rem !important;
+}
+
+[data-testid="stVerticalBlockBorderWrapper"] > div {
+    gap: 0.6rem !important;
+}
+
+.card-title {
+    font-size: 0.86rem;
+    font-weight: 800;
+    color: #FFC72C;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin: 0 0 0.2rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ===== LOCATION INFO BOX ===== */
+.loc-box {
+    background: #101012;
+    border: 1px solid #232326;
     border-radius: 12px;
-    border: 1px solid #262730;
-    margin-bottom: 16px;
+    padding: 0.9rem 1rem;
+    margin-top: 0.9rem;
+}
+
+.loc-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #8a8a8f;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.35rem;
+}
+
+.loc-address {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #FFC72C;
+    line-height: 1.4;
+}
+
+.loc-coord {
+    font-size: 0.8rem;
+    color: #7f7f84;
+    margin-top: 0.3rem;
+}
+
+/* ===== PRIVACY NOTE ===== */
+.privacy-note {
+    text-align: center;
+    color: #7f7f84;
+    font-size: 0.82rem;
+    margin: 1rem 0 0 0;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    text-align: center;
+    padding-top: 1.6rem;
+    margin-top: 1rem;
+    border-top: 1px solid #1c1c1f;
+}
+
+.footer-brand {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #FFC72C;
+}
+
+.footer-tagline {
+    font-size: 0.82rem;
+    color: #7f7f84;
+    margin-top: 0.2rem;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    text-align: center;
+    color: #6f6f75;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 4rem 1rem;
+    background: #101012;
+    border: 2px dashed #2a2a2e;
+    border-radius: 14px;
+    line-height: 2.2;
+}
+
+/* ===== LABELS ===== */
+label, .stMarkdown p, [data-testid="stWidgetLabel"] p {
+    color: #cfcfd2 !important;
+}
+
+/* ===== FILE UPLOADER ===== */
+[data-testid="stFileUploaderDropzone"] {
+    background: #101012;
+    border-radius: 14px;
+    border: 2px dashed #2a2a2e;
+}
+
+[data-testid="stFileUploaderDropzone"]:hover {
+    border-color: #FFC72C;
+}
+
+[data-testid="stFileUploader"] section > button {
+    background: #FFC72C !important;
+    color: #0b0b0d !important;
+    font-weight: 700;
+    border: none !important;
+    border-radius: 10px !important;
+}
+
+/* ===== TEXT / DATE INPUTS ===== */
+.stTextInput input,
+.stTextArea textarea,
+.stDateInput input {
+    background: #0f0f11 !important;
+    color: #f2f2f0 !important;
+    border: 1px solid #2a2a2e !important;
+    border-radius: 10px !important;
+}
+
+.stTextInput input:focus,
+.stTextArea textarea:focus,
+.stDateInput input:focus {
+    border-color: #FFC72C !important;
+    box-shadow: 0 0 0 1px #FFC72C !important;
+}
+
+.stTextInput input::placeholder,
+.stTextArea textarea::placeholder {
+    color: #6f6f75 !important;
+}
+
+/* ===== SELECTBOX ===== */
+[data-baseweb="select"] > div {
+    background: #0f0f11 !important;
+    border: 1px solid #2a2a2e !important;
+    border-radius: 10px !important;
+    color: #f2f2f0 !important;
+}
+
+[data-baseweb="popover"] li {
+    background: #141416 !important;
+    color: #f2f2f0 !important;
+}
+
+[data-baseweb="popover"] li:hover {
+    background: #FFC72C !important;
+    color: #0b0b0d !important;
+}
+
+/* ===== BUTTONS ===== */
+.stButton > button {
+    background: #1c1c1f;
+    color: #FFC72C;
+    border: 1px solid #33330f;
+    border-radius: 10px;
+    font-weight: 700;
+    transition: all 0.15s ease;
+}
+
+.stButton > button:hover {
+    background: #FFC72C;
+    color: #0b0b0d;
+    border-color: #FFC72C;
+}
+
+.stDownloadButton > button {
+    background: #FFC72C;
+    color: #0b0b0d;
+    border: none;
+    border-radius: 10px;
+    font-weight: 800;
+    box-shadow: 0 0 22px rgba(255, 199, 44, 0.3);
+    transition: all 0.15s ease;
+}
+
+.stDownloadButton > button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 30px rgba(255, 199, 44, 0.45);
+}
+
+/* ===== ALERTS ===== */
+[data-testid="stAlert"] {
+    background: #141416 !important;
+    border: 1px solid #2a2a2e !important;
+    border-radius: 12px !important;
+    color: #f2f2f0 !important;
+}
+
+/* ===== MAP ===== */
+iframe {
+    border-radius: 14px;
+    border: 1px solid #2a2a2e;
+}
+
+/* ===== SPINNER TEXT ===== */
+.stSpinner > div {
+    color: #FFC72C !important;
+}
+
+/* ===== IMAGE PREVIEW BORDER ===== */
+[data-testid="stImage"] img {
+    border-radius: 14px;
+    border: 1px solid #2a2a2e;
+}
+
+[data-testid="stCaptionContainer"] {
+    margin-top: -0.4rem;
+    margin-bottom: 0.6rem;
 }

@@ -1,6 +1,7 @@
 import io
 from contextlib import contextmanager
 import streamlit as st
+import streamlit.components.v1 as components
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from datetime import datetime
 import folium

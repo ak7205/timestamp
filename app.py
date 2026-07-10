@@ -281,7 +281,7 @@ with left:
             label_visibility="collapsed",
             placeholder="Masukkan alamat kustom...",
         )
-        st.caption("Kosongkan / biarkan seperti semula untuk memakai alamat dari lokasi terpilih.")
+        st.caption("")
         if not input_address.strip():
             input_address = alamat_otomatis
 

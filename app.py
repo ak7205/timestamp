@@ -1,7 +1,6 @@
 import io
 from contextlib import contextmanager
 import streamlit as st
-import streamlit.components.v1 as components
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from datetime import datetime
 import folium
@@ -159,26 +158,6 @@ def load_css():
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 load_css()
-
-components.html(
-    """
-    <script>
-    function hideStreamlitBadge() {
-        try {
-            window.parent.document
-                .querySelectorAll('[href*="streamlit.io"]')
-                .forEach(el => {
-                    const badge = el.closest('div') || el;
-                    badge.style.display = 'none';
-                });
-        } catch (e) {}
-    }
-    hideStreamlitBadge();
-    setInterval(hideStreamlitBadge, 1000);
-    </script>
-    """,
-    height=0,
-)
 
 @contextmanager
 def card(title, icon=""):

@@ -1,5 +1,6 @@
 streamlit
 Pillow
+pillow-heif
 folium
 streamlit-folium
 geopy

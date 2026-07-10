@@ -1,4 +1,5 @@
 streamlit
+streamlit.components.v1
 Pillow
 pillow-heif
 folium
